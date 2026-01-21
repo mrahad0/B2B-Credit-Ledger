@@ -19,7 +19,7 @@ Future<Map<String, Map<String, String>>>  init() async {
   // Controller
   Get.lazyPut(() => ThemeController(sharedPreferences: Get.find()));
   Get.lazyPut(() => LocalizationController(sharedPreferences: Get.find()));
-  Get.lazyPut(() => SplashController());
+  Get.lazyPut(() => SplashController(sharedPreferences: Get.find()));
 
 
 

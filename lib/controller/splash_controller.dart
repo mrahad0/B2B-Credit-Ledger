@@ -1,21 +1,19 @@
 import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/util/app_constants.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashController extends GetxController {
-
+  final SharedPreferences sharedPreferences;
+  SplashController({required this.sharedPreferences});
 
   jumpNextScreen() {
-    // Logic to determine the next screen
-    // For example, check if user is logged in
-    bool isLoggedIn = true; // Replace with actual login check
+    bool showOnboarding = sharedPreferences.getBool(AppConstants.ONBOARDING) ?? true;
 
-    if (isLoggedIn) {
-      Get.offNamed(AppRoutes.homeScreen); // Navigate to home screen
+    if (showOnboarding) {
+      Get.offNamed(AppRoutes.onboardingScreen);
     } else {
-    //  Get.offNamed('/login'); // Navigate to login screen
+      Get.offNamed(AppRoutes.loginScreen);
     }
   }
-
-
-
 }

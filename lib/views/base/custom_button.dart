@@ -7,8 +7,22 @@ import '../../util/style.dart';
 
 
 class CustomButton extends StatelessWidget {
-  const CustomButton({super.key,this.color,this.textStyle, this.radius, this.margin =EdgeInsets.zero, required this.onTap,required this.text ,this.loading=false,this.width,this.height});
- final Function() onTap;
+  const CustomButton({
+    super.key,
+    this.color,
+    this.textStyle,
+    this.radius,
+    this.margin = EdgeInsets.zero,
+    required this.onTap,
+    required this.text,
+    this.loading = false,
+    this.width,
+    this.height,
+    this.icon,
+    this.iconColor,
+    this.iconSize,
+  });
+  final Function() onTap;
   final String text;
   final bool loading;
   final double? height;
@@ -16,7 +30,10 @@ class CustomButton extends StatelessWidget {
   final Color? color;
   final double? radius;
   final EdgeInsetsGeometry margin;
-  final  TextStyle? textStyle;
+  final TextStyle? textStyle;
+  final IconData? icon;
+  final Color? iconColor;
+  final double? iconSize;
 
 
   @override
@@ -33,11 +50,33 @@ class CustomButton extends StatelessWidget {
             minimumSize:Size(width??Get.width, height??53.h),
 
           ),
-          child:loading?  SizedBox(
-            height: 20.h,
-            width: 20.h,
-            child: const CircularProgressIndicator(color: Colors.white,),
-          ):Text(text,style:textStyle?? AppStyles.h3(fontWeight: FontWeight.w500,color:Colors.white),)),
+          child: loading
+              ? SizedBox(
+                  height: 20.h,
+                  width: 20.h,
+                  child: const CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      text,
+                      style: textStyle ??
+                          AppStyles.h3(
+                              fontWeight: FontWeight.w500, color: Colors.white),
+                    ),
+                    if (icon != null) ...[
+                      SizedBox(width: 8.w),
+                      Icon(
+                        icon,
+                        color: iconColor ?? Colors.white,
+                        size: iconSize ?? 18.w,
+                      ),
+                    ],
+                  ],
+                )),
     );
   }
 }

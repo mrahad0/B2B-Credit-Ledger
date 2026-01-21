@@ -1,6 +1,6 @@
 {
-    "name": "flutter_extension",
-    "short_name": "flutter_extension",
+    "name": "Baki Ledger",
+    "short_name": "Baki Ledger",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

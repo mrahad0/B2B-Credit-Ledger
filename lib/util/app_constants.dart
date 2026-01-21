@@ -2,7 +2,7 @@ import '../data/model/language_model.dart';
 
 class AppConstants{
 
-  static const String APP_NAME = 'APP Names Here';
+  static const String APP_NAME = 'Baki Ledger';
   static const double APP_VERSION = 1.0;
 
 
@@ -14,6 +14,7 @@ class AppConstants{
   static String THEME ="theme";
   static const String LANGUAGE_CODE = 'language_code';
   static const String COUNTRY_CODE = 'country_code';
+  static const String ONBOARDING = 'onboarding';
 
 
 
