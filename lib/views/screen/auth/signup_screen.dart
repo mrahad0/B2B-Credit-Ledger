@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -277,7 +278,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               onTap: _signup,
                               text: "Create account ",
                               icon: Icons.arrow_forward_rounded,
-                              color: const Color(0xFF2563EB),
+                              color: AppColors.primaryColor,
                               radius: 30.r,
                               height: 56.h,
                               textStyle: TextStyle(

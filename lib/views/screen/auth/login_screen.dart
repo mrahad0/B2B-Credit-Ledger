@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() {
     if (_formKey.currentState!.validate()) {
       // Success logic
-      Get.offAllNamed(AppRoutes.homeScreen);
+      Get.offAllNamed(AppRoutes.mainPage);
     }
   }
 
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(22.r),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF0F172A).withOpacity(0.1),
+                          color: const Color(0xFF0F172A).withValues(alpha: 0.1),
                           blurRadius: 15,
                           offset: const Offset(0, 5),
                         ),
@@ -210,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onTap: _login,
                             text: "Login now ",
                             icon: Icons.arrow_forward_rounded,
-                            color: const Color(0xFF2563EB),
+                            color: AppColors.primaryColor,
                             radius: 30.r,
                             height: 56.h,
                             textStyle: TextStyle(
