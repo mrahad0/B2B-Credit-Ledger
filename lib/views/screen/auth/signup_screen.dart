@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/controller/auth_controller/register_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
@@ -14,9 +14,10 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final RegisterController _registerController = Get.put(RegisterController());
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _shopController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -24,8 +25,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _signup() {
     if (_formKey.currentState!.validate()) {
-      // Success logic - After signup navigate wherever appropriate, usually home or login
-      Get.offAllNamed(AppRoutes.homeScreen);
+      _registerController.register(
+        fullName: _nameController.text,
+        shopName: _shopController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+        confirmPassword: _confirmPasswordController.text,
+      );
     }
   }
 
@@ -70,7 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(height: 24.h),
 
                   Text(
-                    "Join BakiLedger",
+                    "signup".tr,
                     style: TextStyle(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.w800,
@@ -82,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(height: 8.h),
 
                   Text(
-                    "Manage your wholesale business like a pro",
+                    "managePro".tr,
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
@@ -110,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       children: [
                         // Full Name Field
                         Text(
-                          "Full name",
+                          "fullName".tr,
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -120,7 +126,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: 10.h),
                         CustomTextField(
                           controller: _nameController,
-                          hintText: "Enter your name",
+                          hintText: "fullNamePlaceholder".tr,
                           prefixIcon: const Icon(
                             Icons.person_outline_rounded,
                             size: 22,
@@ -137,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                         // Shop Name Field
                         Text(
-                          "Shop name",
+                          "shopName".tr,
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -147,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: 10.h),
                         CustomTextField(
                           controller: _shopController,
-                          hintText: "Business or shop name",
+                          hintText: "shopNamePlaceholder".tr,
                           prefixIcon: const Icon(
                             Icons.storefront_outlined,
                             size: 22,
@@ -162,9 +168,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                         SizedBox(height: 20.h),
 
-                        // Phone Number Field
+                        // Email Field
                         Text(
-                          "Phone number",
+                          "email".tr,
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -173,23 +179,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         SizedBox(height: 10.h),
                         CustomTextField(
-                          controller: _phoneController,
-                          hintText: "017XXXXXXXX",
-                          keyboardType: TextInputType.phone,
+                          controller: _emailController,
+                          hintText: "emailPlaceholder".tr,
+                          keyboardType: TextInputType.emailAddress,
                           prefixIcon: const Icon(
-                            Icons.tablet_android_rounded,
+                            Icons.email_outlined,
                             size: 22,
                           ),
-                          prefixText: "+88 ",
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Please enter your phone number";
+                              return "Please enter your email";
                             }
-                            if (!value.startsWith("01")) {
-                              return "Phone number must start with 01";
-                            }
-                            if (value.length < 11) {
-                              return "Please enter a valid phone number";
+                            if (!GetUtils.isEmail(value)) {
+                              return "Please enter a valid email address";
                             }
                             return null;
                           },
@@ -199,7 +201,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                         // Password Field
                         Text(
-                          "Password",
+                          "password".tr,
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -209,7 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: 10.h),
                         CustomTextField(
                           controller: _passwordController,
-                          hintText: "Create password",
+                          hintText: "passwordPlaceholder".tr,
                           isPassword: true,
                           prefixIcon: const Icon(
                             Icons.lock_outline_rounded,
@@ -230,7 +232,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                         // Confirm Password Field
                         Text(
-                          "Confirm password",
+                          "confirmPassword".tr,
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -240,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: 10.h),
                         CustomTextField(
                           controller: _confirmPasswordController,
-                          hintText: "Repeat password",
+                          hintText: "confirmPasswordPlaceholder".tr,
                           isPassword: true,
                           prefixIcon: const Icon(
                             Icons.lock_outline_rounded,
@@ -260,31 +262,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: 28.h),
 
                         // Create Account Button
-                        Center(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF2563EB,
-                                  ).withValues(alpha: 0.25),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
+                        Obx(
+                          () => Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFF2563EB,
+                                    ).withValues(alpha: 0.25),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: CustomButton(
+                                loading: _registerController.isLoading.value,
+                                onTap: _signup,
+                                text: "createAccount".tr,
+                                icon: Icons.arrow_forward_rounded,
+                                color: AppColors.primaryColor,
+                                radius: 30.r,
+                                height: 56.h,
+                                textStyle: TextStyle(
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
                                 ),
-                              ],
-                            ),
-                            child: CustomButton(
-                              onTap: _signup,
-                              text: "Create account ",
-                              icon: Icons.arrow_forward_rounded,
-                              color: AppColors.primaryColor,
-                              radius: 30.r,
-                              height: 56.h,
-                              textStyle: TextStyle(
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -316,7 +321,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 SizedBox(width: 8.w),
                                 Text(
-                                  "Back to login",
+                                  "backLogin".tr,
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w700,

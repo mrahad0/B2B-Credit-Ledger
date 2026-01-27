@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/splash_controller.dart';
+import 'package:flutter_extension/controller/auth_controller/splash_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

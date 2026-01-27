@@ -17,7 +17,7 @@ class MainPage extends StatelessWidget {
   final List<Widget> _screens = [
     const HomeScreen(),
     const RetailersScreen(),
-    const AccountScreen(),
+    AccountScreen(),
   ];
 
   @override

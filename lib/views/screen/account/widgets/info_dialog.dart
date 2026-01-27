@@ -54,7 +54,7 @@ class InfoDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  'Close',
+                  'close'.tr,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,

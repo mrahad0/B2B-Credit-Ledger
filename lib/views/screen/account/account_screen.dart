@@ -4,9 +4,16 @@ import 'widgets/edit_profile_bottom_sheet.dart';
 import 'widgets/info_dialog.dart';
 import 'widgets/sign_out_dialog.dart';
 import 'widgets/factory_reset_dialog.dart';
+import 'widgets/language_dialog.dart';
+import 'package:get/get.dart';
+import '../../../controller/account_controller/profile_controller.dart';
+import '../../../data/api/api_constant.dart';
+import '../../base/custom_image.dart';
 
 class AccountScreen extends StatelessWidget {
-  const AccountScreen({super.key});
+  AccountScreen({super.key});
+
+  final ProfileController _profileController = Get.put(ProfileController());
 
   // Update build method to include onTap handlers
   @override
@@ -53,43 +60,15 @@ class AccountScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: Center(
-                            child: Text(
-                              "U",
-                              style: TextStyle(
-                                fontSize: 44.sp,
-                                fontWeight: FontWeight.w400,
-                                color: const Color(0xFF94A3B8),
+                          child: Obx(
+                            () => ClipOval(
+                              child: CustomImage(
+                                image:
+                                    "${ApiConstant.baseUrl}${_profileController.profileModel.value?.data?.userProfile?.profilePicture ?? ""}",
+                                height: 110.w,
+                                width: 110.w,
+                                fit: BoxFit.cover,
                               ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 4.h,
-                          right: 4.w,
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF2563EB),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3.w,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF2563EB,
-                                  ).withValues(alpha: 0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.camera_alt_rounded,
-                              color: Colors.white,
-                              size: 18.sp,
                             ),
                           ),
                         ),
@@ -98,59 +77,109 @@ class AccountScreen extends StatelessWidget {
                     SizedBox(height: 16.h),
 
                     // Name
-                    Text(
-                      "User",
-                      style: TextStyle(
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF0F172A),
-                      ),
-                    ),
+                    Obx(() {
+                      if (_profileController.isLoading.value) {
+                        return Container(
+                          height: 24.h,
+                          width: 100.w,
+                          color: Colors.grey[200],
+                        );
+                      }
+                      return Text(
+                        _profileController
+                                .profileModel
+                                .value
+                                ?.data
+                                ?.userProfile
+                                ?.fullName ??
+                            _profileController
+                                .profileModel
+                                .value
+                                ?.data
+                                ?.userProfile
+                                ?.shopName ??
+                            "User",
+                        style: TextStyle(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF0F172A),
+                        ),
+                      );
+                    }),
                     SizedBox(height: 8.h),
 
                     // Shop Type & Verification
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "RETAILER SHOP",
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF2563EB),
-                            letterSpacing: 0.5,
+                    Obx(() {
+                      if (_profileController.isLoading.value) {
+                        return const SizedBox();
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _profileController.profileModel.value?.data?.role
+                                    ?.toUpperCase() ??
+                                "RETAILER",
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF2563EB),
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 6.w),
-                        Icon(
-                          Icons.verified,
-                          color: const Color(0xFF2563EB),
-                          size: 18.sp,
-                        ),
-                      ],
-                    ),
+                          SizedBox(width: 6.w),
+                          if (_profileController
+                                  .profileModel
+                                  .value
+                                  ?.data
+                                  ?.isVerified ==
+                              true)
+                            Icon(
+                              Icons.verified,
+                              color: const Color(0xFF2563EB),
+                              size: 18.sp,
+                            ),
+                        ],
+                      );
+                    }),
                     SizedBox(height: 8.h),
 
-                    // Location
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 16.sp,
-                          color: const Color(0xFF94A3B8),
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          "Dhaka, Bangladesh",
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: const Color(0xFF64748B),
-                            fontWeight: FontWeight.w500,
+                    // Location (Email for now as address is null in example)
+                    Obx(() {
+                      if (_profileController.isLoading.value) {
+                        return SizedBox();
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.email_outlined,
+                            size: 16.sp,
+                            color: const Color(0xFF94A3B8),
                           ),
-                        ),
-                      ],
-                    ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            _profileController
+                                    .profileModel
+                                    .value
+                                    ?.data
+                                    ?.email ??
+                                _profileController
+                                    .profileModel
+                                    .value
+                                    ?.data
+                                    ?.userProfile
+                                    ?.email ??
+                                "No Email",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: const Color(0xFF64748B),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
                     SizedBox(height: 24.h),
 
                     // Edit Profile Button
@@ -209,7 +238,7 @@ class AccountScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 8.w, bottom: 12.h),
                     child: Text(
-                      "GENERAL PREFERENCES",
+                      "preferences".tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
@@ -236,44 +265,19 @@ class AccountScreen extends StatelessWidget {
                           icon: Icons.language,
                           iconColor: const Color(0xFF10B981),
                           iconBgColor: const Color(0xFFECFDF5),
-                          title: "App Language",
+                          title: "language".tr,
                           subtitle: "English",
                           trailing: Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 16.sp,
                             color: const Color(0xFFCBD5E1),
                           ),
-                          onTap: () {},
-                        ),
-                        Divider(height: 1, color: const Color(0xFFF1F5F9)),
-                        _buildPreferenceItem(
-                          icon: Icons.wb_sunny_outlined,
-                          iconColor: const Color(0xFF3B82F6),
-                          iconBgColor: const Color(0xFFEFF6FF),
-                          title: "App Appearance",
-                          subtitle: "light",
-                          trailing: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 16.sp,
-                            color: const Color(0xFFCBD5E1),
-                          ),
-                          onTap: () {},
-                        ),
-                        Divider(height: 1, color: const Color(0xFFF1F5F9)),
-                        _buildPreferenceItem(
-                          icon: Icons.notifications_none_rounded,
-                          iconColor: const Color(0xFFF97316),
-                          iconBgColor: const Color(0xFFFFF7ED),
-                          title: "Push Notifications",
-                          trailing: Transform.scale(
-                            scale: 0.8,
-                            child: Switch(
-                              value: true,
-                              onChanged: (val) {},
-                              activeColor: Colors.white,
-                              activeTrackColor: const Color(0xFF2563EB),
-                            ),
-                          ),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const LanguageDialog(),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -290,7 +294,7 @@ class AccountScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 8.w, bottom: 12.h),
                     child: Text(
-                      "SUPPORT & LEGAL",
+                      "support".tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
@@ -305,7 +309,7 @@ class AccountScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -317,7 +321,7 @@ class AccountScreen extends StatelessWidget {
                           icon: Icons.privacy_tip_outlined,
                           iconColor: const Color(0xFF3B82F6),
                           iconBgColor: const Color(0xFFEFF6FF),
-                          title: "Privacy Policy",
+                          title: "privacy".tr,
                           trailing: Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 16.sp,
@@ -326,12 +330,10 @@ class AccountScreen extends StatelessWidget {
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder:
-                                  (context) => const InfoDialog(
-                                    title: "Privacy Policy",
-                                    content:
-                                        "Your data is stored locally on this device. We do not share your customer credit records with any third party.",
-                                  ),
+                              builder: (context) => InfoDialog(
+                                title: "privacyTitle".tr,
+                                content: "privacyPolicyContent".tr,
+                              ),
                             );
                           },
                         ),
@@ -340,7 +342,7 @@ class AccountScreen extends StatelessWidget {
                           icon: Icons.help_outline_rounded,
                           iconColor: const Color(0xFFF59E0B),
                           iconBgColor: const Color(0xFFFFFBEB),
-                          title: "Help Center",
+                          title: "help".tr,
                           trailing: Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 16.sp,
@@ -349,12 +351,10 @@ class AccountScreen extends StatelessWidget {
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder:
-                                  (context) => const InfoDialog(
-                                    title: "Help Center",
-                                    content:
-                                        "Manage your wholesale ledger with ease. Tap a retailer to see full history or add a new transaction. Use the reports tab for monthly summaries.",
-                                  ),
+                              builder: (context) => InfoDialog(
+                                title: "help".tr,
+                                content: "helpContent".tr,
+                              ),
                             );
                           },
                         ),
@@ -363,7 +363,7 @@ class AccountScreen extends StatelessWidget {
                           icon: Icons.description_outlined,
                           iconColor: const Color(0xFF64748B),
                           iconBgColor: const Color(0xFFF1F5F9),
-                          title: "Terms of Use",
+                          title: "terms".tr,
                           trailing: Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 16.sp,
@@ -372,12 +372,10 @@ class AccountScreen extends StatelessWidget {
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder:
-                                  (context) => const InfoDialog(
-                                    title: "Terms of Use",
-                                    content:
-                                        "By using BakiLedger, you agree to maintain the confidentiality of your account. Records are managed locally for your convenience.",
-                                  ),
+                              builder: (context) => InfoDialog(
+                                title: "terms".tr,
+                                content: "termsContent".tr,
+                              ),
                             );
                           },
                         ),
@@ -386,7 +384,7 @@ class AccountScreen extends StatelessWidget {
                           icon: Icons.info_outline_rounded,
                           iconColor: const Color(0xFF64748B),
                           iconBgColor: const Color(0xFFF1F5F9),
-                          title: "About BakiLedger",
+                          title: "about".tr,
                           subtitle: "v1.0.4 Professional",
                           trailing: Icon(
                             Icons.arrow_forward_ios_rounded,
@@ -396,12 +394,10 @@ class AccountScreen extends StatelessWidget {
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder:
-                                  (context) => const InfoDialog(
-                                    title: "About BakiLedger",
-                                    content:
-                                        "BakiLedger Professional Edition v1.0.4. Empowering Bangladeshi wholesalers through smart digital accounting solutions.",
-                                  ),
+                              builder: (context) => InfoDialog(
+                                title: "about".tr,
+                                content: "aboutContent".tr,
+                              ),
                             );
                           },
                         ),
@@ -429,7 +425,7 @@ class AccountScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30.r),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -445,7 +441,7 @@ class AccountScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8.w),
                       Text(
-                        "Sign Out Account",
+                        "signOut".tr,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
@@ -483,7 +479,7 @@ class AccountScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8.w),
                       Text(
-                        "Factory Reset (Delete All)",
+                        "deleteAll".tr,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/home_controller.dart';
+import 'package:flutter_extension/controller/home_controller/home_controller.dart';
 import 'package:flutter_extension/controller/localization_controller.dart';
 import 'package:flutter_extension/controller/theme_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 Text(
-                  "Retailer Shop",
+                  "retailerShop".tr,
                   style: TextStyle(color: Colors.grey, fontSize: 13.sp),
                 ),
                 SizedBox(width: 4.w),
@@ -125,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: RefreshIndicator(
         color: AppColors.primaryColor,
         onRefresh: () async {
+          await homeController.getDashboardData();
           setState(() {
             _showSmartInsight = false;
           });
@@ -172,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                "Live Balance",
+                                "liveBalance".tr,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,
@@ -191,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 24.h),
                     Text(
-                      "Total Outstanding",
+                      "totalOutstanding".tr,
                       style: TextStyle(
                         color: const Color(0xFF94A3B8),
                         fontSize: 14.sp,
@@ -199,27 +200,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    Row(
-                      children: [
-                        Text(
-                          "৳",
-                          style: TextStyle(
-                            color: const Color(0xFF94A3B8),
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.w400,
+                    Obx(
+                      () => Row(
+                        children: [
+                          Text(
+                            "৳",
+                            style: TextStyle(
+                              color: const Color(0xFF94A3B8),
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          "57,000",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 36.sp,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -1,
-                          ),
-                        ),
-                      ],
+                          SizedBox(width: 4.w),
+                          homeController.isLoading.value
+                              ? Container(
+                                  height: 36.h,
+                                  width: 120.w,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                )
+                              : Text(
+                                  homeController.totalOutstanding,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 36.sp,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: -1,
+                                  ),
+                                ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 24.h),
                     Divider(
@@ -247,26 +259,41 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         SizedBox(width: 12.w),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "2",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
+                        Obx(
+                          () => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              homeController.isLoading.value
+                                  ? Container(
+                                      height: 16.h,
+                                      width: 30.w,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          4.r,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      "${homeController.totalRetailers}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                              Text(
+                                "retailers".tr,
+                                style: TextStyle(
+                                  color: const Color(0xFF64748B),
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Retailers",
-                              style: TextStyle(
-                                color: const Color(0xFF64748B),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const Spacer(),
                         GestureDetector(
@@ -302,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 SizedBox(width: 8.w),
                                 Text(
-                                  "Smart Insight",
+                                  "smartInsight".tr,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 13.sp,
@@ -354,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "AI STRATEGY",
+                            "aiStrategy".tr,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.7),
                               fontSize: 12.sp,
@@ -364,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: 12.h),
                           Text(
-                            "Prioritize recovering your stagnant capital through structured collection targets to instantly boost your liquidity and reinvest in growth. Simultaneously, focus on diversifying your client base beyond two retailers to minimize financial risk and ensure a more consistent cash flow.",
+                            "aiStrategyDesc".tr,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,
@@ -424,7 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Due",
+                                      "due".tr,
                                       style: TextStyle(
                                         color: const Color(0xFF64748B),
                                         fontSize: 13.sp,
@@ -432,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      "Baki",
+                                      "baki".tr,
                                       style: TextStyle(
                                         color: const Color(0xFFEF4444),
                                         fontSize: 12.sp,
@@ -444,26 +471,39 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             SizedBox(height: 16.h),
-                            Row(
-                              children: [
-                                Text(
-                                  "৳",
-                                  style: TextStyle(
-                                    color: const Color(0xFF94A3B8),
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w400,
+                            Obx(
+                              () => Row(
+                                children: [
+                                  Text(
+                                    "৳",
+                                    style: TextStyle(
+                                      color: const Color(0xFF94A3B8),
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 4.w),
-                                Text(
-                                  "57,000",
-                                  style: TextStyle(
-                                    color: const Color(0xFF0F172A),
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                                  SizedBox(width: 4.w),
+                                  homeController.isLoading.value
+                                      ? Container(
+                                          height: 18.h,
+                                          width: 60.w,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(
+                                              4.r,
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          homeController.totalDue,
+                                          style: TextStyle(
+                                            color: const Color(0xFF0F172A),
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -508,7 +548,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Paid",
+                                      "paid".tr,
                                       style: TextStyle(
                                         color: const Color(0xFF64748B),
                                         fontSize: 13.sp,
@@ -516,7 +556,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      "Joma",
+                                      "joma".tr,
                                       style: TextStyle(
                                         color: const Color(0xFF10B981),
                                         fontSize: 12.sp,
@@ -528,26 +568,39 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             SizedBox(height: 16.h),
-                            Row(
-                              children: [
-                                Text(
-                                  "৳",
-                                  style: TextStyle(
-                                    color: const Color(0xFF94A3B8),
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w400,
+                            Obx(
+                              () => Row(
+                                children: [
+                                  Text(
+                                    "৳",
+                                    style: TextStyle(
+                                      color: const Color(0xFF94A3B8),
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 4.w),
-                                Text(
-                                  "0",
-                                  style: TextStyle(
-                                    color: const Color(0xFF0F172A),
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                                  SizedBox(width: 4.w),
+                                  homeController.isLoading.value
+                                      ? Container(
+                                          height: 18.h,
+                                          width: 60.w,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(
+                                              4.r,
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          homeController.totalPaid,
+                                          style: TextStyle(
+                                            color: const Color(0xFF0F172A),
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -566,7 +619,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Quick Actions",
+                      "quickActions".tr,
                       style: TextStyle(
                         color: const Color(0xFF94A3B8),
                         fontSize: 14.sp,
@@ -580,7 +633,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildQuickActionItem(
                           icon: Icons.add_rounded,
                           color: const Color(0xFF3B82F6),
-                          label: "New Retailer",
+                          label: "addRetailer".tr,
                           onTap: () {
                             showModalBottomSheet(
                               context: context,
@@ -603,7 +656,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildQuickActionItem(
                           icon: Icons.send_rounded,
                           color: const Color(0xFF8B5CF6),
-                          label: "Reminders",
+                          label: "reminders".tr,
                           onTap: () {
                             Get.find<MainPageController>().changeIndex(1);
                           },
@@ -611,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildQuickActionItem(
                           icon: Icons.description_outlined,
                           color: const Color(0xFF10B981),
-                          label: "Reports",
+                          label: "reports".tr,
                         ),
                       ],
                     ),
@@ -634,7 +687,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     Text(
-                      "SECURE LOCAL STORAGE",
+                      "secureLocalStorage".tr,
                       style: TextStyle(
                         color: const Color(0xFF94A3B8),
                         fontSize: 12.sp,
@@ -644,7 +697,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 12.h),
                     Text(
-                      "Your credit records are stored safely on this device. Your data privacy is our priority.",
+                      "secureStorageDesc".tr,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: const Color(0xFF334155),

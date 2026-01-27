@@ -1,35 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/controller/auth_controller/otp_controller.dart';
+
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../controller/auth_controller/login_controller.dart';
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgetPassScreen extends StatefulWidget {
+  const ForgetPassScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgetPassScreen> createState() => _ForgetPassScreen();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final LoginController _loginController = Get.put(LoginController());
+class _ForgetPassScreen extends State<ForgetPassScreen> {
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      _loginController.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-    }
-  }
+  final OtpController _otpController = Get.put(OtpController());
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 32.h),
 
                   Text(
-                    "welcome".tr,
+                    "Reset Password",
                     style: TextStyle(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.w800,
@@ -84,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 8.h),
 
                   Text(
-                    "managePro".tr,
+                    "Manage your wholesale business like a pro",
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
@@ -94,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   SizedBox(height: 40.h),
 
-                  // Login Card
+                  // Reset Password Card
                   Container(
                     padding: EdgeInsets.all(24.w),
                     decoration: BoxDecoration(
@@ -104,7 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         BoxShadow(
                           color: Colors.grey.withValues(alpha: 0.25),
                           blurRadius: 30,
-                          // offset: const Offset(0, 25),
                         ),
                       ],
                     ),
@@ -113,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         // Email Field
                         Text(
-                          "email".tr,
+                          "Email",
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -123,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(height: 12.h),
                         CustomTextField(
                           controller: _emailController,
-                          hintText: "emailPlaceholder".tr,
+                          hintText: "Enter your email",
                           keyboardType: TextInputType.emailAddress,
                           prefixIcon: const Icon(
                             Icons.email_outlined,
@@ -138,64 +126,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                             return null;
                           },
-                        ),
-
-                        SizedBox(height: 24.h),
-
-                        // Password Field
-                        Text(
-                          "password".tr,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF334155),
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        CustomTextField(
-                          controller: _passwordController,
-                          hintText: "passwordPlaceholder".tr,
-                          isPassword: true,
-                          prefixIcon: const Icon(
-                            Icons.lock_outline_rounded,
-                            size: 22,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter your password";
-                            }
-                            if (value.length < 8) {
-                              return "Password must be at least 8 digits";
-                            }
-                            if (value.length > 16) {
-                              return "Password must be at least 8 digits";
-                            }
-                            return null;
-                          },
-                        ),
-
-                        SizedBox(height: 8.h),
-
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              Get.toNamed(AppRoutes.forgetPassScreen);
-                            },
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(0, 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              "forgot".tr,
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF2563EB),
-                              ),
-                            ),
-                          ),
                         ),
 
                         SizedBox(height: 28.h),
@@ -216,9 +146,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                             child: CustomButton(
-                              loading: _loginController.isLoading.value,
-                              onTap: _login,
-                              text: "loginNow".tr,
+                              loading: _otpController.isLoading.value,
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _otpController.sendForgotPasswordOtp(
+                                    email: _emailController.text,
+                                  );
+                                }
+                              },
+
+                              text: "Send OTP",
                               icon: Icons.arrow_forward_rounded,
                               color: AppColors.primaryColor,
                               radius: 30.r,
@@ -234,48 +171,35 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         SizedBox(height: 32.h),
 
-                        // Obx(
-                        //       () => CustomButton(
-                        //     text: "Sign In",
-                        //     isLoading: _loginController.isLoading.value,
-                        //     onpress: () {
-                        //       if (_formKey.currentState!.validate()) {
-                        //         _loginController.login(
-                        //           _loginController.emailController.text,
-                        //           _loginController.passwordController.text,
-                        //         );
-                        //       }
-                        //     },
-                        //   ),
-                        // ),
+                        Divider(height: 1.h, color: Colors.grey),
 
-                        // Footer
+                        SizedBox(height: 32.h),
+
+                        // Back to login
                         Center(
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Text(
-                                "noAccount".tr,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
+                          child: InkWell(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.arrow_back_rounded,
+                                  size: 18.sp,
                                   color: const Color(0xFF94A3B8),
                                 ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Get.toNamed(AppRoutes.signUpScreen);
-                                },
-                                child: Text(
-                                  "signUpBtn".tr,
+                                SizedBox(width: 8.w),
+                                Text(
+                                  "Back to login",
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF2563EB),
+                                    color: const Color(0xFF94A3B8),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(height: 8.h),

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../../controller/account_controller/profile_controller.dart';
 
 class FactoryResetDialog extends StatelessWidget {
   const FactoryResetDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ProfileController profileController = Get.find<ProfileController>();
+
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Padding(
@@ -36,7 +37,7 @@ class FactoryResetDialog extends StatelessWidget {
 
             // Title
             Text(
-              "Wipe All Data?",
+              "deleteTitle".tr,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -47,7 +48,7 @@ class FactoryResetDialog extends StatelessWidget {
 
             // Subtitle
             Text(
-              "Warning: This will permanently delete\nevery customer and transaction. This\ncannot be undone.",
+              "deleteDesc".tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -59,42 +60,63 @@ class FactoryResetDialog extends StatelessWidget {
             SizedBox(height: 32.h),
 
             // Confirm Button
-            SizedBox(
-              width: double.infinity,
-              height: 52.h,
-              child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Implement wiping data logic
-                  Get.back();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEF4444), // Red color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: 52.h,
+                child: ElevatedButton(
+                  onPressed: profileController.isDeleting.value
+                      ? null
+                      : () async {
+                          await profileController.deleteAccount();
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEF4444), // Red color
+                    disabledBackgroundColor: const Color(
+                      0xFFEF4444,
+                    ).withValues(alpha: 0.6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  'Confirm',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  child: profileController.isDeleting.value
+                      ? SizedBox(
+                          height: 24.h,
+                          width: 24.h,
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
+                        )
+                      : Text(
+                          'confirm'.tr,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
             ),
             SizedBox(height: 16.h),
 
             // Cancel Button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF94A3B8),
+            Obx(
+              () => GestureDetector(
+                onTap: profileController.isDeleting.value
+                    ? null
+                    : () => Get.back(),
+                child: Text(
+                  'cancel'.tr,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: profileController.isDeleting.value
+                        ? const Color(0xFFCBD5E1)
+                        : const Color(0xFF94A3B8),
+                  ),
                 ),
               ),
             ),

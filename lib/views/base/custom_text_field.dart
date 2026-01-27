@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../util/app_colors.dart';
@@ -23,6 +24,8 @@ class CustomTextField extends StatefulWidget {
   final String? prefixText;
   final TextStyle? prefixStyle;
   final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool enabled;
 
   const CustomTextField({
     super.key,
@@ -45,6 +48,8 @@ class CustomTextField extends StatefulWidget {
     this.prefixText,
     this.prefixStyle,
     this.focusNode,
+    this.inputFormatters,
+    this.enabled = true,
   });
 
   @override
@@ -76,6 +81,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: widget.enabled,
+      inputFormatters: widget.inputFormatters,
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       obscuringCharacter: widget.obscure!,
@@ -84,13 +91,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
       cursorColor: AppColors.primaryColor,
       obscureText: widget.isPassword ? obscureText : false,
       style: TextStyle(
-          color: widget.textColor ?? const Color(0xFF1E293B),
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w500),
+        color: widget.textColor ?? const Color(0xFF1E293B),
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w500,
+      ),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(
-            horizontal: widget.contentPaddingHorizontal ?? 16.w,
-            vertical: widget.contentPaddingVertical ?? 18.h),
+          horizontal: widget.contentPaddingHorizontal ?? 16.w,
+          vertical: widget.contentPaddingVertical ?? 18.h,
+        ),
         fillColor: widget.filColor ?? const Color(0xFFF8FAFC),
         filled: true,
         prefixIcon: widget.prefixIcon != null
@@ -103,16 +112,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
               )
             : null,
         prefixText: widget.prefixText,
-        prefixStyle: widget.prefixStyle ??
+        prefixStyle:
+            widget.prefixStyle ??
             TextStyle(
-                color: const Color(0xFF94A3B8),
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600),
+              color: const Color(0xFF94A3B8),
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
         suffixIcon: widget.isPassword
             ? GestureDetector(
                 onTap: toggle,
                 child: _suffixIcon(
-                    obscureText ? Icons.visibility_off : Icons.visibility),
+                  obscureText ? Icons.visibility_off : Icons.visibility,
+                ),
               )
             : widget.suffixIcon,
         prefixIconConstraints: BoxConstraints(minHeight: 24.w, minWidth: 48.w),
@@ -120,9 +132,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
         hintText: widget.hintText,
         hintStyle: TextStyle(
-            color: widget.hintColor ?? const Color(0xFFCBD5E1),
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600),
+          color: widget.hintColor ?? const Color(0xFFCBD5E1),
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: BorderSide.none,
@@ -145,7 +158,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   _suffixIcon(IconData icon) {
     return Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Icon(icon, color: const Color(0xFF94A3B8)));
+      padding: const EdgeInsets.all(12.0),
+      child: Icon(icon, color: const Color(0xFF94A3B8)),
+    );
   }
 }

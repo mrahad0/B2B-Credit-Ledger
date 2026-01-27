@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../../util/app_colors.dart';
 import '../../util/style.dart';
 
-
 class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
@@ -35,48 +34,51 @@ class CustomButton extends StatelessWidget {
   final Color? iconColor;
   final double? iconSize;
 
-
   @override
-
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: margin,
-      child: ElevatedButton(onPressed:loading? (){}:onTap,
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(radius??24.r)
-            ),
-            backgroundColor: color??AppColors.primaryColor,
-            minimumSize:Size(width??Get.width, height??53.h),
-
+      child: ElevatedButton(
+        onPressed: loading ? () {} : onTap,
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius ?? 24.r),
           ),
-          child: loading
-              ? SizedBox(
-                  height: 20.h,
-                  width: 20.h,
-                  child: const CircularProgressIndicator(
-                    color: Colors.white,
+          backgroundColor: color ?? AppColors.primaryColor,
+          minimumSize: Size(width ?? Get.width, height ?? 53.h),
+        ),
+        child: loading
+            ? SizedBox(
+                height: 20.h,
+                width: 20.h,
+                child: const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    text,
+                    style:
+                        textStyle ??
+                        AppStyles.h1(
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
                   ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      text,
-                      style: textStyle ??
-                          AppStyles.h3(
-                              fontWeight: FontWeight.w500, color: Colors.white),
+                  if (icon != null) ...[
+                    SizedBox(width: 8.w),
+                    Icon(
+                      icon,
+                      color: iconColor ?? Colors.white,
+                      size: iconSize ?? 18.w,
                     ),
-                    if (icon != null) ...[
-                      SizedBox(width: 8.w),
-                      Icon(
-                        icon,
-                        color: iconColor ?? Colors.white,
-                        size: iconSize ?? 18.w,
-                      ),
-                    ],
                   ],
-                )),
+                ],
+              ),
+      ),
     );
   }
 }

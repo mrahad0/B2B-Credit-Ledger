@@ -3,15 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
 
+import '../../../../helper/prefs_helper.dart';
+import '../../../../util/app_constants.dart';
+
 class SignOutDialog extends StatelessWidget {
   const SignOutDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Padding(
@@ -37,7 +38,7 @@ class SignOutDialog extends StatelessWidget {
 
             // Title
             Text(
-              "Sign Out?",
+              "logoutTitle".tr,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -48,7 +49,7 @@ class SignOutDialog extends StatelessWidget {
 
             // Subtitle
             Text(
-              "You will need to log back in to access\nyour business ledger records.",
+              "logoutDesc".tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -64,8 +65,10 @@ class SignOutDialog extends StatelessWidget {
               width: double.infinity,
               height: 52.h,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  await PrefsHelper.remove(AppConstants.bearerToken);
                   Get.offAllNamed(AppRoutes.loginScreen);
+                  Get.snackbar("Logged out", "You have been logged out!");
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0F172A),
@@ -75,7 +78,7 @@ class SignOutDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  'Confirm',
+                  'confirm'.tr,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -90,7 +93,7 @@ class SignOutDialog extends StatelessWidget {
             GestureDetector(
               onTap: () => Get.back(),
               child: Text(
-                'Cancel',
+                'cancel'.tr,
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,

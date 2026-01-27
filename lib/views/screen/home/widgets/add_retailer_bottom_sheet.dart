@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
+import '../../../../controller/retailer_controller/retailer_controller.dart';
 
 class AddRetailerBottomSheet extends StatefulWidget {
   const AddRetailerBottomSheet({super.key});
@@ -17,6 +18,7 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
+  late RetailerController _retailerController;
   bool _isFormValid = false;
 
   void _validateForm() {
@@ -32,6 +34,7 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
   @override
   void initState() {
     super.initState();
+    _retailerController = Get.put(RetailerController());
     _fullNameController.addListener(_validateForm);
     _shopNameController.addListener(_validateForm);
     _phoneController.addListener(_validateForm);
@@ -45,6 +48,17 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
     _phoneController.dispose();
     _addressController.dispose();
     super.dispose();
+  }
+
+  Future<void> _addRetailer() async {
+    if (!_isFormValid) return;
+
+    await _retailerController.addRetailer(
+      fullName: _fullNameController.text.trim(),
+      shopName: _shopNameController.text.trim(),
+      phoneNumber: _phoneController.text.trim(),
+      address: _addressController.text.trim(),
+    );
   }
 
   @override
@@ -67,7 +81,7 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'New Retailer',
+                      'addRetailer'.tr,
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -76,7 +90,7 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      'ADD TO YOUR LEDGER',
+                      'addRetailerSubtitle'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
@@ -86,18 +100,24 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
                     ),
                   ],
                 ),
-                GestureDetector(
-                  onTap: () => Get.back(),
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.close,
-                      color: const Color(0xFF64748B),
-                      size: 20.sp,
+                Obx(
+                  () => GestureDetector(
+                    onTap: _retailerController.isAddingRetailer.value
+                        ? null
+                        : () => Get.back(),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: _retailerController.isAddingRetailer.value
+                            ? const Color(0xFFCBD5E1)
+                            : const Color(0xFF64748B),
+                        size: 20.sp,
+                      ),
                     ),
                   ),
                 ),
@@ -180,7 +200,7 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
                     SizedBox(height: 12.h),
                     Center(
                       child: Text(
-                        'RETAILER PHOTO',
+                        'retailerPhoto'.tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
@@ -191,80 +211,111 @@ class _AddRetailerBottomSheetState extends State<AddRetailerBottomSheet> {
                     ),
                     SizedBox(height: 24.h),
 
-                    _buildLabel('FULL NAME'),
-                    CustomTextField(
-                      controller: _fullNameController,
-                      hintText: 'e.g. Kabir Ahmed',
-                      prefixIcon: const Icon(Icons.person_outline_rounded),
-                    ),
-                    SizedBox(height: 16.h),
-
-                    _buildLabel('SHOP NAME'),
-                    CustomTextField(
-                      controller: _shopNameController,
-                      hintText: 'e.g. Mayer Doa Enterprise',
-                      prefixIcon: const Icon(
-                        Icons.store_mall_directory_outlined,
+                    _buildLabel('fullName'.tr.toUpperCase()),
+                    Obx(
+                      () => CustomTextField(
+                        controller: _fullNameController,
+                        hintText: 'retailerFullNamePlaceholder'.tr,
+                        prefixIcon: const Icon(Icons.person_outline_rounded),
+                        enabled: !_retailerController.isAddingRetailer.value,
                       ),
                     ),
                     SizedBox(height: 16.h),
 
-                    _buildLabel('PHONE NUMBER'),
-                    CustomTextField(
-                      controller: _phoneController,
-                      hintText: '017xxxxxxxx',
-                      keyboardType: TextInputType.phone,
-                      prefixIcon: const Icon(Icons.phone_outlined),
+                    _buildLabel('shopName'.tr.toUpperCase()),
+                    Obx(
+                      () => CustomTextField(
+                        controller: _shopNameController,
+                        hintText: 'retailerShopNamePlaceholder'.tr,
+                        prefixIcon: const Icon(
+                          Icons.store_mall_directory_outlined,
+                        ),
+                        enabled: !_retailerController.isAddingRetailer.value,
+                      ),
                     ),
                     SizedBox(height: 16.h),
 
-                    _buildLabel('ADDRESS'),
-                    CustomTextField(
-                      controller: _addressController,
-                      hintText: 'Shop address...',
-                      prefixIcon: const Icon(Icons.location_on_outlined),
+                    _buildLabel('phone'.tr.toUpperCase()),
+                    Obx(
+                      () => CustomTextField(
+                        controller: _phoneController,
+                        hintText: 'phonePlaceholder'.tr,
+                        keyboardType: TextInputType.phone,
+                        prefixIcon: const Icon(Icons.phone_outlined),
+                        enabled: !_retailerController.isAddingRetailer.value,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
+                    _buildLabel('address'.tr.toUpperCase()),
+                    Obx(
+                      () => CustomTextField(
+                        controller: _addressController,
+                        hintText: 'addressPlaceholder'.tr,
+                        prefixIcon: const Icon(Icons.location_on_outlined),
+                        enabled: !_retailerController.isAddingRetailer.value,
+                      ),
                     ),
                     SizedBox(height: 24.h),
 
                     // Add Button
-                    GestureDetector(
-                      onTap: _isFormValid
-                          ? () {
-                              // TODO: Implement add retailer logic
-                              Get.back();
-                            }
-                          : null,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        decoration: BoxDecoration(
-                          color: _isFormValid
-                              ? AppColors.primaryColor
-                              : const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.check_rounded,
-                              color: _isFormValid
-                                  ? Colors.white
-                                  : const Color(0xFF94A3B8),
-                              size: 20.sp,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'ADD RETAILER',
-                              style: TextStyle(
-                                color: _isFormValid
-                                    ? Colors.white
-                                    : const Color(0xFF94A3B8),
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
+                    Obx(
+                      () => GestureDetector(
+                        onTap:
+                            (_isFormValid &&
+                                !_retailerController.isAddingRetailer.value)
+                            ? _addRetailer
+                            : null,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          decoration: BoxDecoration(
+                            color:
+                                (_isFormValid &&
+                                    !_retailerController.isAddingRetailer.value)
+                                ? AppColors.primaryColor
+                                : const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (_retailerController.isAddingRetailer.value)
+                                SizedBox(
+                                  height: 20.sp,
+                                  width: 20.sp,
+                                  child: CircularProgressIndicator(
+                                    color: const Color(0xFF94A3B8),
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              else
+                                Icon(
+                                  Icons.check_rounded,
+                                  color: _isFormValid
+                                      ? Colors.white
+                                      : const Color(0xFF94A3B8),
+                                  size: 20.sp,
+                                ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                _retailerController.isAddingRetailer.value
+                                    ? 'adding'.tr.toUpperCase()
+                                    : 'addRetailer'.tr.toUpperCase(),
+                                style: TextStyle(
+                                  color:
+                                      (_isFormValid &&
+                                          !_retailerController
+                                              .isAddingRetailer
+                                              .value)
+                                      ? Colors.white
+                                      : const Color(0xFF94A3B8),
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
